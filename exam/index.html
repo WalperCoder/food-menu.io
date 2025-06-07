@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <script>
+        import React, { useState } from 'react';
+
+function App() {
+  const [orderItems, setOrderItems] = useState([]);
+
+  const menuItems = [
+    { id: 'hamburger', name: 'Гамбургер', price: 80, icon: '🍔' },
+    { id: 'coffee', name: 'Кофе', price: 70, icon: '☕' },
+    { id: 'cheeseburger', name: 'Чизбургер', price: 90, icon: '🧀🍔' },
+    { id: 'tea', name: 'Чай', price: 50, icon: '🍵' },
+    { id: 'fries', name: 'Картофель фри', price: 45, icon: '🍟' },
+    { id: 'cola', name: 'Кола', price: 40, icon: '🥤' },
+  ];
+
+  const handleAddItem = (itemToAdd) => {
+    setOrderItems((prevItems) => {
+      const existingItemIndex = prevItems.findIndex(
+        (item) => item.id === itemToAdd.id
+      );
+
+      if (existingItemIndex > -1) {
+        // Если элемент уже существует, увеличить его количество
+        const updatedItems = [...prevItems];
+        updatedItems[existingItemIndex] = {
+          ...updatedItems[existingItemIndex],
+          quantity: updatedItems[existingItemIndex].quantity + 1,
+        };
+        return updatedItems;
+      } else {
+        // Если элемент новый, добавить его с количеством 1
+        return [...prevItems, { ...itemToAdd, quantity: 1 }];
+      }
+    });
+  };
+
+  const handleRemoveItem = (itemId) => {
+    setOrderItems((prevItems) =>
+      prevItems.filter((item) => item.id !== itemId)
+    );
+  };
+
+  const calculateTotalPrice = () => {
+    return orderItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+  };
+
+  return (
+    <div style={styles.appContainer}>
+      <header style={styles.header}>
+        <div style={styles.browserControls}>
+          <span>&#8592;</span> {/* Назад */}
+          <span>&#8594;</span> {/* Вперед */}
+          <span>&#10006;</span> {/* Закрыть */}
+          <span>&#9998;</span> {/* Редактировать */}
+          <span>&#9881;</span> {/* Настройки */}
+        </div>
+        <div style={styles.addressBar}>
+          http://
+          <input type="text" value="Веб-страница" readOnly style={styles.addressInput} />
+          <button style={styles.searchButton}>&#128269;</button>
+        </div>
+      </header>
+
+      <main style={styles.mainContent}>
+        <div style={styles.orderDetailsPanel}>
+          <h3>Детали заказа:</h3>
+          {orderItems.length === 0 ? (
+            <p style={styles.emptyOrderMessage}>
+              Заказ пуст!
+              <br />
+              Пожалуйста, добавьте несколько элементов!
+            </p>
+          ) : (
+            <>
+              {orderItems.map((item) => (
+                <div key={item.id} style={styles.orderItem}>
+                  <span>
+                    {item.name} x{item.quantity} {item.price} KGS
+                  </span>
+                  <button
+                    onClick={() => handleRemoveItem(item.id)}
+                    style={styles.removeItemButton}
+                  >
+                    &#10006;
+                  </button>
+                </div>
+              ))}
+              <div style={styles.totalPrice}>
+                Общая цена: {calculateTotalPrice()} KGS
+              </div>
+            </>
+          )}
+        </div>
+
+        <div style={styles.addItemsPanel}>
+          <h3>Добавить элементы:</h3>
+          <div style={styles.menuGrid}>
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                style={styles.menuItemButton}
+                onClick={() => handleAddItem(item)}
+              >
+                <span style={styles.menuItemIcon}>{item.icon}</span>
+                <br />
+                {item.name}
+                <br />
+                Цена: {item.price} KGS
+              </button>
+            ))}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const styles = {
+  appContainer: {
+    fontFamily: 'Arial, sans-serif',
+
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    width: '800px',
+    margin: '20px auto',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    backgroundColor: '#f8f8f8',
+  },
+  header: {
+    backgroundColor: '#e0e0e0',
+    padding: '8px',
+    borderBottom: '1px solid #bbb',
+  },
+  browserControls: {
+    display: 'flex',
+    gap: '10px',
+    marginBottom: '8px',
+    fontSize: '14px',
+    color: '#555',
+  },
+  addressBar: {
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    padding: '4px 8px',
+  },
+  addressInput: {
+    flexGrow: 1,
+    border: 'none',
+    outline: 'none',
+    padding: '2px',
+    marginLeft: '5px',
+  },
+  searchButton: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '16px',
+    marginLeft: '5px',
+    color: '#555',
+  },
+  mainContent: {
+    display: 'flex',
+    padding: '15px',
+    gap: '15px',
+  },
+  orderDetailsPanel: {
+    flex: 2,
+    border: '1px solid #ddd',
+    borderRadius: '5px',
+    padding: '15px',
+    backgroundColor: '#fff',
+    minHeight: '300px', 
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+  },
+  emptyOrderMessage: {
+    textAlign: 'center',
+    color: '#888',
+    marginTop: '50px',
+    fontSize: '1.1em',
+  },
+  orderItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '8px 0',
+    borderBottom: '1px dashed #eee',
+  },
+  removeItemButton: {
+    backgroundColor: '#ff4d4d',
+    color: 'white',
+    border: 'none',
+    borderRadius: '3px',
+    padding: '4px 8px',
+    cursor: 'pointer',
+    fontSize: '12px',
+  },
+  totalPrice: {
+    marginTop: 'auto', // Отодвигает общую сумму вниз
+    textAlign: 'right',
+    fontWeight: 'bold',
+    fontSize: '1.2em',
+    paddingTop: '10px',
+    borderTop: '1px solid #eee',
+  },
+  addItemsPanel: {
+    flex: 3,
+    border: '1px solid #ddd',
+    borderRadius: '5px',
+    padding: '15px',
+    backgroundColor: '#fff',
+  },
+  menuGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '10px',
+    marginTop: '15px',
+  },
+  menuItemButton: {
+    backgroundColor: '#f0f0f0',
+    border: '1px solid #ccc',
+    borderRadius: '5px',
+    padding: '15px',
+    textAlign: 'center',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+    '&:hover': {
+      backgroundColor: '#e0e0e0',
+    },
+  },
+  menuItemIcon: {
+    fontSize: '2em',
+    marginBottom: '5px',
+    display: 'block',
+  },
+};
+
+export default App;
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+    </script>
+</body>
+</html>

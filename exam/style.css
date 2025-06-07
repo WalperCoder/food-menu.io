@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f0f2f5; /* Светлый фон */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Выравнивание по верху, чтобы предотвратить вертикальное центрирование */
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px; /* Добавить отступ вокруг приложения */
+  box-sizing: border-box;
+}
